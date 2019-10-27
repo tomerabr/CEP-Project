@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-
-lines = open("stocks", 'r').readlines()
+lines = open("stocks.txt", 'r').readlines()
 output_file = open("Stocks ordered.txt", 'w')
 
 for line in sorted(lines, key=lambda line: line.split(",")[1]):
