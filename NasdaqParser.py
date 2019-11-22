@@ -1,10 +1,27 @@
 from NasdaqStock import NasdaqStock
 
-lines = open("Stocks ordered.txt", 'r').readlines()
 
-for line in lines:
-    name, timestamp, opening, peak, lowest, close, volume = line.split(",")
-    nasdaqStock = NasdaqStock(name, timestamp, opening, peak, lowest, close, volume)
+# from Pattern import Pattern
 
 
+class NasdaqParser:
+    def __init__(self, pattern):
+        lines = open("Stocks ordered.txt", 'r').readlines()
+        self.list_of_lists = []
+        event_list = []
+        for event_name in pattern.events:
+            for line in lines:
+                name, timestamp, opening, peak, lowest, close, volume = line.split(",")
+                if name != event_name:
+                    continue
+                else:
+                    nasdaqStock = NasdaqStock(name, timestamp, opening, peak, lowest, close, volume)
+                    event_list.append(nasdaqStock)
+            self.list_of_lists.append(event_list.copy())
+            event_list.clear()
 
+    def printList(self):
+        for i in self.list_of_lists[0]:
+            print(i.ticker + ", " + i.timestamp)
+        for i in self.list_of_lists[1]:
+            print(i.ticker + ", " + i.timestamp)

@@ -1,5 +1,7 @@
 from enum import Enum
-from NasdaqStock import NasdaqStock
+
+
+# from NasdaqStock import NasdaqStock
 
 
 class Op(Enum):
@@ -59,6 +61,7 @@ class Literal:
         else:
             return False
 
+
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
 # every inner node in the tree is a clause
 class Clause:
@@ -71,10 +74,6 @@ class Clause:
                 return True
         return False
 
-# class CNF:
-#   def __init__(self, cnf):
-#    self.cnf = cnf
-
-
-
-
+    # class CNF:
+    #   def __init__(self, cnf):
+    #    self.cnf = cnf
