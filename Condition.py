@@ -59,21 +59,21 @@ class Literal:
         else:
             return False
 
-    # clause is a disjunction of literals, where each literal is a PrimitiveCondition
-    # every inner node in the tree is a clause
-    class Clause:
-        def __init__(self, clause):
-            self.clause = clause
+# clause is a disjunction of literals, where each literal is a PrimitiveCondition
+# every inner node in the tree is a clause
+class Clause:
+    def __init__(self, clause):
+        self.clause = clause
 
-        def checkClause(self, stock1, stock2):
-            for literal in self.clause:
-                if literal.checkLiteral(stock1, stock2):
-                    return True
-            return False
+    def checkClause(self, stock1, stock2):
+        for literal in self.clause:
+            if literal.checkLiteral(stock1, stock2):
+                return True
+        return False
 
-    # class CNF:
-    #   def __init__(self, cnf):
-    #    self.cnf = cnf
+# class CNF:
+#   def __init__(self, cnf):
+#    self.cnf = cnf
 
 
 
