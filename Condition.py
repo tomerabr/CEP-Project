@@ -22,10 +22,11 @@ class Operand(Enum):
 
 
 class Literal:
-    def __init__(self, event_name_A, event_name_B, operand, operator):
+    def __init__(self, event_name_A, event_name_B, operand_A, operand_B, operator):
         self.event_name_A = event_name_A  # first event name, string
         self.event_name_B = event_name_B  # second event name, string
-        self.operand = operand
+        self.operand_A = operand_A  # first event operand, string
+        self.operand_B = operand_B  # second event operand, string
         self.operator = operator
 
     def checkOperator(self, value1, value2):
@@ -44,22 +45,36 @@ class Literal:
         else:
             return False
 
-    def checkLiteral(self, stock1, stock2):
-        # check if must be operand_A == operand_B. if yes, add opernad_B to init
-        if stock1.ticker != self.event_name_A or stock2.ticker != self.event_name_B:
-            return False
-        if self.operand == Operand.OPENING_PRICE:
-            return self.checkOperator(stock1.opening, stock2.opening)
-        elif self.operand == Operand.PEAK_PRICE:
-            return self.checkOperator(stock1.peak, stock2.peak)
-        elif self.operand == Operand.LOWEST_PRICE:
-            return self.checkOperator(stock1.lowest, stock2.lowest)
-        elif self.operand == Operand.CLOSE_PRICE:
-            return self.checkOperator(stock1.close, stock2.close)
-        elif self.operand == Operand.VOLUME:
-            return self.checkOperator(stock1.volume, stock2.volume)
-        else:
-            return False
+    def OperandOfStockB(self, stock):
+        if self.operand_B == Operand.OPENING_PRICE:
+            return stock.opening
+
+        elif self.operand_B == Operand.PEAK_PRICE:
+            return stock.peak
+
+        elif self.operand_ == Operand.LOWEST_PRICE:
+            return stock.lowest
+        elif self.operand_B == Operand.CLOSE_PRICE:
+            return stock.close
+        elif self.operand_B == Operand.VOLUME:
+            return stock.volume
+
+
+def checkLiteral(self, stock1, stock2):
+    if stock1.ticker != self.event_name_A or stock2.ticker != self.event_name_B:
+        return False
+    if self.operand_A == Operand.OPENING_PRICE:
+        return self.checkOperator(stock1.opening, self.OperandOfStockB(stock2))
+    elif self.operand_A == Operand.PEAK_PRICE:
+        return self.checkOperator(stock1.peak, self.OperandOfStockB(stock2))
+    elif self.operand_A == Operand.LOWEST_PRICE:
+        return self.checkOperator(stock1.lowest, self.OperandOfStockB(stock2))
+    elif self.operand_A == Operand.CLOSE_PRICE:
+        return self.checkOperator(stock1.close, self.OperandOfStockB(stock2))
+    elif self.operand_A == Operand.VOLUME:
+        return self.checkOperator(stock1.volume, self.OperandOfStockB(stock2))
+    else:
+        return False
 
 
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
@@ -73,6 +88,7 @@ class Clause:
             if literal.checkLiteral(stock1, stock2):
                 return True
         return False
+
 
     # class CNF:
     #   def __init__(self, cnf):

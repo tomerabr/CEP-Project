@@ -5,8 +5,8 @@ from Condition import Clause
 from Condition import Op
 from Condition import Operand
 
-literal1 = Literal("AMZN", "EBAY", Operand.CLOSE_PRICE, Op.GREATER)
-literal2 = Literal("AMZN", "EBAY", Operand.LOWEST_PRICE, Op.GREATER_OR_EQUAL)
+literal1 = Literal("AMZN", "EBAY", Operand.CLOSE_PRICE, Operand.CLOSE_PRICE, Op.GREATER)
+literal2 = Literal("AMZN", "EBAY", Operand.LOWEST_PRICE, Operand.LOWEST_PRICE, Op.GREATER_OR_EQUAL)
 clause1 = Clause({literal1})
 clause2 = Clause({literal2})
 
