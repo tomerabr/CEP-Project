@@ -3,48 +3,118 @@ from Pattern import Pattern
 
 
 class Node:
-    def __init__(self, clause, pattern):
-
+    def __init__(self, clause):
         self.eventsLists = []
         self.clause = clause
-        self.leftInnerNode = null
+        self.leftInnerNode = None
         self.leavesList = []
+        self.parent = None
 
-    # def checkClause(self, stock1, stock2):
-    #  if self.clause.checkClause(stock1, stock2):
 
-    def checkNoLeaves(self):
-        for events in self.leftInnerNode.eventsLists:
-            flag = False
+'''
+    def addLeaves(self, leavesList):
+        self.leavesList = leavesList
+'''
 
-            for first in events:
-                for second in events:
-                    if self.clause.checkClasuse(first, sceon
+
+# def checkClause(self, stock1, stock2):
+#  if self.clause.checkClause(stock1, stock2):
+
+# Filter the eventsLists according to the clause of the current Node
+def checkWhenNoLeaves(self):
+    for events in self.leftInnerNode.eventsLists:
+        flag = False
+
+        for first in events:
+            for second in events:
+                if self.clause.checkClause(first, second):
                     flag = True
-                    break
-                if flag == true
-                    break
+                break
+            if flag == True:
+                break
 
-            self.eventsLists.append(events)
-            flag = false
+        self.eventsLists.append(events)
 
+
+# Can only happen in the first leftInnerNode in the left deep tree.
+# Iterate over the first two leaves and save all the partial result.
+# Than, iterate each leaf(except the first two which we had already taken care of), and Filter the the eventsList accordingly.
+def checkWhenOnlyLeaves(self):
+    # assuming there are more than 2 leaves at the beginning,
+    # TODO: check num of leaves
+    first_leaf_list = self.leavesList[0].eventList
+    second_leaf_list = self.leavesList[1].eventList
+
+    for stock1 in first_leaf_list:
+        for stock2 in second_leaf_list:
+            if self.clause.checkClause(stock1, stock2):
+                self.eventsLists.append([stock1, stock2])
+
+    # iterate over the other leaves
+    self.filterAccordingLeaves(2)
+
+    def checkWhenBoth(self):
+        self.filterAccordingLeaves(0)
+
+
+def filterAccordingLeaves(self, index):
+    for leaf in self.leavesList[index:]:
+        for stock in leaf.eventList:
+            for events_list in self.eventsLists:  # Filter this
+                flag = False
+                for event in events_list:
+                    if self.clause.checkClause(stock, event):
+                        events_list.append(stock.copy)
+                        flag = True
+                        break
+                if not flag:
+                    self.eventsLists.remove(events_list)
+                    # remove is not efficient
+
+        # We need the create the left deep tree and than operate this function on the first inner leaf
+
+
+def solveInnerNode(self):
+    # We are in the root
+    if self.parent is None:
+        print
+    "we made it"  # do whatever you want Yossi
+
+    if self.leftInnerNode is None:
+        self.checkWhenNoLeaves
+    elif self.leavesList is None:
+        self.checkWhenNoLeaves
+    elif self.checkWhenBoth:
+        self.solveInnerNode(self.parent)
+
+
+# Create functions for organizing the code i.e כפילויות קוד
+# Memory mangement - delete each stock from the leaf when we finish with it
+# Tests
+
+'''
     def addLeaf(self, leaf):
         self.leavesList.append(leaf)
 
+
     def addLeftInnerNode(self, node):
         self.leftInnerNode = node
+'''
 
 
 # each leaf will contain list of specific event
 # each leaf will be connected to only one inner node
 class Leaf:
     def __init__(self, name):
-        self.eventList = []
+        self.eventsList = []
         self.name = name
-        self.parent = null
+        # self.parent = None
 
-    def addStockToLeaf(self, stock):
-        self.eventList.add(stock)
+    def addStocksToLeaf(self, stocks):
+        self.eventsList.extend(stocks)
 
+
+'''
     def addParent(self, node):
         self.node = node
+'''

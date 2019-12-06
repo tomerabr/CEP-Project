@@ -52,7 +52,7 @@ class Literal:
         elif self.operand_B == Operand.PEAK_PRICE:
             return stock.peak
 
-        elif self.operand_ == Operand.LOWEST_PRICE:
+        elif self.operand_B == Operand.LOWEST_PRICE:
             return stock.lowest
         elif self.operand_B == Operand.CLOSE_PRICE:
             return stock.close
@@ -89,7 +89,14 @@ class Clause:
                 return True
         return False
 
+    def eventsAppearInClause(self):
+        events = []
 
-    # class CNF:
-    #   def __init__(self, cnf):
-    #    self.cnf = cnf
+        for literal in self.clause:
+            if literal.event_name_A not in events:
+                events.append(literal.event_name_A)
+            if literal.event_name_B not in events:
+                events.append(literal.event_name_B)
+
+        return events
+
