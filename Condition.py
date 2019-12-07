@@ -31,7 +31,7 @@ class Literal:
 
     def checkOperator(self, value1, value2):
         if self.operator == Op.GREATER:
-            return (value1 > value2)
+            return value1 > value2
         elif self.operator == Op.LESS:
             return (value1 < value2)
         elif self.operator == Op.GREATER_OR_EQUAL:
@@ -60,22 +60,38 @@ class Literal:
             return stock.volume
 
 
-def checkLiteral(self, stock1, stock2):
-    if stock1.ticker != self.event_name_A or stock2.ticker != self.event_name_B:
-        return False
-    if self.operand_A == Operand.OPENING_PRICE:
-        return self.checkOperator(stock1.opening, self.OperandOfStockB(stock2))
-    elif self.operand_A == Operand.PEAK_PRICE:
-        return self.checkOperator(stock1.peak, self.OperandOfStockB(stock2))
-    elif self.operand_A == Operand.LOWEST_PRICE:
-        return self.checkOperator(stock1.lowest, self.OperandOfStockB(stock2))
-    elif self.operand_A == Operand.CLOSE_PRICE:
-        return self.checkOperator(stock1.close, self.OperandOfStockB(stock2))
-    elif self.operand_A == Operand.VOLUME:
-        return self.checkOperator(stock1.volume, self.OperandOfStockB(stock2))
-    else:
-        return False
+    def checkLiteral(self, stock1, stock2):
+        if stock1.ticker != self.event_name_A or stock2.ticker != self.event_name_B:
+            return False
+        if self.operand_A == Operand.OPENING_PRICE:
+            return self.checkOperator(stock1.opening, self.OperandOfStockB(stock2))
+        elif self.operand_A == Operand.PEAK_PRICE:
+            return self.checkOperator(stock1.peak, self.OperandOfStockB(stock2))
+        elif self.operand_A == Operand.LOWEST_PRICE:
+            return self.checkOperator(stock1.lowest, self.OperandOfStockB(stock2))
+        elif self.operand_A == Operand.CLOSE_PRICE:
+            return self.checkOperator(stock1.close, self.OperandOfStockB(stock2))
+        elif self.operand_A == Operand.VOLUME:
+            return self.checkOperator(stock1.volume, self.OperandOfStockB(stock2))
+        else:
+            return False
 
+    def printLiteral(self):
+        print("(", end='')
+        print(self.event_name_A, end='')
+        print(".", end='')
+        print(self.operand_A, end='')
+        print(" ", end='')
+        print(self.operator, end='')
+        print(" ", end='')
+        print(self.event_name_B, end='')
+        print(".", end='')
+        print(self.operand_B, end='')
+        print(")", end='')
+
+    def returnLiteral(self):
+        str = self.printLiteral
+        return str
 
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
 # every inner node in the tree is a clause
@@ -100,3 +116,12 @@ class Clause:
 
         return events
 
+    def printClause(self):
+        print("(", end='')
+        flag = 0
+        for literal in self.clause:
+            literal.printLiteral()
+            if (flag ==1):
+                print(" OR ", end='')
+            flag = 1
+        print(")", end='')

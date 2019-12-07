@@ -7,16 +7,21 @@ from Condition import Operand
 from LeftDeepTree import LeftDeepTree
 
 literal1 = Literal("AMZN", "EBAY", Operand.CLOSE_PRICE, Operand.CLOSE_PRICE, Op.GREATER)
-literal2 = Literal("AMZN", "EBAY", Operand.LOWEST_PRICE, Operand.LOWEST_PRICE, Op.GREATER_OR_EQUAL)
+literal2 = Literal("AMZN", "AAPL", Operand.LOWEST_PRICE, Operand.LOWEST_PRICE, Op.GREATER_OR_EQUAL)
 clause1 = Clause({literal1})
 clause2 = Clause({literal2})
 
 pattern = Pattern(PTYPE.SEQ, ["AMZN", "EBAY"], [clause1], 10)
 np = NasdaqParser(pattern)
-np.printList()
+#np.printList()
 
 # call leftdeeptree
 tree = LeftDeepTree()
-tree.createTreeAccordingPattern(pattern, pattern.cond)
+tree.createTreeAccordingPattern(pattern)
 tree.fillLeaves(np.list_of_lists)
+tree.solveTree()
+tree.printTree()
+
+
+
 # fill leaves with events
