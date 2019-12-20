@@ -61,7 +61,6 @@ class Literal:
 
     # if stock2 = None it will return the const value
 
-
     def checkLiteral(self, stock1, stock2=None):
         if stock1.ticker != self.event_name_A or (stock2 is not None and stock2.ticker != self.event_name_B):
             return False
@@ -92,15 +91,13 @@ class Literal:
             print(self.operand_B, end='')
         print(")", end='')
 
-
     def returnLiteral(self):
         str = self.printLiteral
 
         return str
 
-
-def isUnary(self):
-    return self.operand_B is None
+    def isUnary(self):
+        return self.operand_B is None
 
 
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
@@ -111,10 +108,10 @@ class Clause:
 
     def checkClause(self, stock1, stock2=None):
         for literal in self.clause:
-            if stock2 == None and literal.isUnary():  # we want to check only Unary
+            if stock2 is None and literal.isUnary():  # we want to check only Unary
                 if literal.checkLiteral(stock1):
                     return True
-            elif stock2 is not None and literal.isUnary() == False:
+            elif stock2 is not None and literal.isUnary() is False:
                 if literal.checkLiteral(stock1, stock2):
                     return True
         return False
@@ -133,13 +130,13 @@ class Clause:
 
     def printClause(self):
         print("(", end='')
-        flag = 0
+       #flag = 0
+        count = 0
+        length = len(self.clause)
         for literal in self.clause:
             literal.printLiteral()
-            if (flag == 1):
+            if count != length-1:
                 print(" OR ", end='')
-            flag = 1
+            count += 1
+            #flag = 1
         print(")", end='')
-
-
-

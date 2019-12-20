@@ -9,6 +9,6 @@ class NasdaqStock:
         self.volume = volume
 
     def __repr__(self):
-        return ("ticker: " + self.ticker +"\ntimestamp: " + self.timestamp + "\nopening price: " + self.opening
-                + "\npeak: " + self.peak
-                + "\nlowest: " + self.lowest + "\nclose: " + self.close + "\nvolume: " + self.volume)
+        return ("ticker: " + str(self.ticker) +"\ntimestamp: " + str(self.timestamp) + "\nopening price: " + str(self.opening)
+                + "\npeak: " + str(self.peak)
+                + "\nlowest: " + str(self.lowest) + "\nclose: " + str(self.close) + "\nvolume: " + str(self.volume) + "\n")

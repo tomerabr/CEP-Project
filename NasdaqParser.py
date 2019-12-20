@@ -15,7 +15,8 @@ class NasdaqParser:
                 if name != event_name:
                     continue
                 else:
-                    nasdaqStock = NasdaqStock(name, timestamp, opening, peak, lowest, close, volume)
+                    nasdaqStock = NasdaqStock(name, float(timestamp), float(opening), float(peak), float(lowest),
+                                              float(close), float(volume))
                     event_list.append(nasdaqStock)
             self.list_of_lists.append(event_list.copy())
             event_list.clear()

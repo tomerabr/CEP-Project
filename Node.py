@@ -1,5 +1,6 @@
 from Condition import Clause
 from Pattern import Pattern
+import copy
 
 
 class Node:
@@ -26,69 +27,109 @@ class Node:
             for first in events:
                 for second in events:
                     if self.clause.checkClause(first, second):
-                        flag = True
-                    break
-                if flag == True:
-                    break
+                        self.eventsLists.append(copy.copy(events))
+                flag = True
+                break
+            if flag:
+                break
 
-            self.eventsLists.append(events)
+        self.leftInnerNode.eventsLists.clear()  # dunno if efficient
 
-    # Can only happen in the first leftInnerNode in the left deep tree.
-    # Iterate over the first two leaves and save all the partial result.
-    # Than, iterate each leaf(except the first two which we had already taken care of), and Filter the the eventsList accordingly.
+    # Can only happen in the first leftInnerNode in the left deep tree. Iterate over the first two leaves and save
+    # all the partial result. Than, iterate each leaf(except the first two which we had already taken care of),
+    # and Filter the the eventsList accordingly.
     def checkWhenOnlyLeaves(self):
-        # assuming there are more than 2 leaves at the beginning,
-        # TODO: check num of leaves
+
+        # TODO: check num of leaves, empty pattern
+        # double c in one clause
+
+        # if(len(self.leavesList) == 1):
+        # for stock in self.leavesList[0].eventList:
+        #  if self.
+
+        if len(self.leavesList) == 0:  # empty tree
+            return
+
+        if len(self.leavesList) == 1:  # a < a or a < const
+            # for stock in self.leavesList[0].eventsList:
+            # if self.clause.checkClause(stock) or self.clause.checkClause(stock,stock):
+            # self.eventsLists.append([stock.copy()])
+            self.solveSoloLeaf(self.leavesList[0])
+            self.leavesList[0].eventsList.clear()
+            return
+            # for stock1 in self.leavesList[0].eventsList:
+            # for stock2 in self.leavesList[0].eventsList:
+            # if stock1 != stock2:
+            # if self.clause.checkClause(stock1,stock2):
+            # self.eventsLists.appen([stock1.copy(),stock2.copy()])
+
+            # there are more than 2 leaves at the beginning
+            # add function build
         first_leaf_list = self.leavesList[0].eventsList
         second_leaf_list = self.leavesList[1].eventsList
+
+        # handle Unary
+        self.solveSoloLeaf(self.leavesList[0])
+        self.solveSoloLeaf(self.leavesList[1])
 
         for stock1 in first_leaf_list:
             for stock2 in second_leaf_list:
                 if self.clause.checkClause(stock1, stock2):
-                    self.eventsLists.append([stock1, stock2])
+                    self.eventsLists.append([copy.copy(stock1), copy.copy(stock2)])
+
+        self.leavesList[0].eventsList.clear()
+        self.leavesList[1].eventsList.clear()
 
         # iterate over the other leaves
-        self.filterAccordingLeaves(2)
+        if len(self.leavesList) > 2:
+            self.filterAccordingLeaves(2)
 
-    def checkWhenBoth(self):
-        self.filterAccordingLeaves(0)
-
-    def filterAccordingLeaves(self, index):
-        for leaf in self.leavesList[index:]:
-            for stock in leaf.eventList:
-                for events_list in self.eventsLists:  # Filter this
-                    flag = False
-                    for event in events_list:
-                        if self.clause.checkClause(stock, event):
-                            events_list.append(stock.copy())
-                            flag = True
-                            break
-                    if not flag:
-                        self.eventsLists.remove(events_list)
-                        # remove is not efficient
-
+    def solveSoloLeaf(self, leavesList):
+        for stock in leavesList.eventsList:
+            if self.clause.checkClause(stock) or self.clause.checkClause(stock, stock):
+                self.eventsLists.append([copy.copy(stock)])
         # We need the create the left deep tree and than operate this function on the first inner leaf
 
     def solveInnerNode(self):
         # We are in the root
+
         if self.parent is None and self.leftInnerNode is None:  # we have only one node
             self.checkWhenOnlyLeaves()
             return
         elif self.parent is None and self.leftInnerNode is not None:  # we are in the root (we have more then 1 inner node)
             if self.leavesList is None:
                 self.checkWhenNoLeaves()
-            elif self.checkWhenBoth:
+            elif self.checkWhenBoth():
                 self.checkWhenBoth()
-        return
+            return
 
+        # first node
         if self.leftInnerNode is None:
             self.checkWhenOnlyLeaves()
         elif self.leavesList is None:
             self.checkWhenNoLeaves()
-        elif self.checkWhenBoth:
+        else:
             self.checkWhenBoth()
 
-        self.solveInnerNode(self.parent)
+        self.parent.solveInnerNode()
+
+    def checkWhenBoth(self):
+        self.filterAccordingLeaves(0)
+
+    def filterAccordingLeaves(self, index):
+        num = len(self.eventsLists[0])  # cannot be empty
+        for leaf in self.leavesList[index:]:
+            for stock in leaf.eventList:
+                for events_list in self.eventsLists:
+
+                    for event in events_list:
+                        if self.clause.checkClause(stock, event) and len(events_list) == num:
+                            events_list.append(stock)
+                            # flag = True
+                            break
+            num += 1
+
+        self.eventsLists = filter(lambda eventsList: len(eventsList) == (num + 1), self.eventsLists)
 
     def printNode(self):
         self.clause.printClause()

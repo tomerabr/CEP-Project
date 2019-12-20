@@ -1,27 +1,37 @@
 from NasdaqParser import NasdaqParser
 from Pattern import Pattern, PTYPE
-from Condition import Literal
-from Condition import Clause
-from Condition import Op
-from Condition import Operand
+from Condition import Literal,Clause, Op, Operand
 from LeftDeepTree import LeftDeepTree
 
-literal1 = Literal( Op.GREATER,"AMZN",  Operand.CLOSE_PRICE,"EBAY", Operand.CLOSE_PRICE)
-literal2 = Literal(Op.GREATER_OR_EQUAL,"AMZN", Operand.LOWEST_PRICE, "EBAY", Operand.LOWEST_PRICE)
-clause1 = Clause({literal1})
-clause2 = Clause({literal2})
-
-pattern = Pattern(PTYPE.SEQ, ["AMZN", "EBAY"], [clause1], 10)
-np = NasdaqParser(pattern)
-#np.printList()
-
-# call leftdeeptree
-tree = LeftDeepTree()
-tree.createTreeAccordingPattern(pattern)
-tree.fillLeaves(np.list_of_lists)
-tree.solveTree()
-tree.printTree()
+literal1 = Literal(Op.GREATER ,"AMZN",  Operand.VOLUME,"EBAY", Operand.VOLUME)
+literal2 = Literal(Op.GREATER_OR_EQUAL,"AMZN", Operand.VOLUME, "EBAY", Operand.VOLUME)
+literal3 = Literal(Op.GREATER_OR_EQUAL, "AMZN", Operand.LOWEST_PRICE, 135.75)
+literal4 = Literal(Op.EQUAL,"AMZN", Operand.CLOSE_PRICE, "AMZN", Operand.PEAK_PRICE)
+clause1 = Clause({literal4})
+clause2 = Clause({literal3, literal4})
 
 
 
-# fill leaves with events
+
+
+pattern1 = Pattern(PTYPE.AND, ["AMZN"], [clause1], 10)
+pattern2 = Pattern(PTYPE.AND, ["AMZN"], [clause2], 10)
+#test 2 clauses
+
+np1 = NasdaqParser(pattern1)
+np2 = NasdaqParser(pattern2)
+
+#np1.printList()
+'''
+tree1 = LeftDeepTree()
+tree1.createTreeAccordingPattern(pattern1)
+tree1.fillLeaves(np1.list_of_lists)
+tree1.solveTree()
+tree1.printRoot()
+'''
+tree2 = LeftDeepTree()
+tree2.createTreeAccordingPattern(pattern2)
+tree2.fillLeaves(np2.list_of_lists)
+tree2.solveTree()
+tree2.printRoot()
+

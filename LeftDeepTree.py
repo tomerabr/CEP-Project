@@ -52,7 +52,6 @@ class LeftDeepTree:
             self.innerNodes[-1].parent = node
             self.innerNodes.append(node)
 
-
         self.root = self.innerNodes[-1]
 
     def solveTree(self):
