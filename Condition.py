@@ -1,5 +1,5 @@
 from enum import Enum
-
+from Pattern import PTYPE
 
 # from NasdaqStock import NasdaqStock
 
@@ -47,7 +47,7 @@ class Literal:
 
     def OperandOfStockB(self, stock=None):
         if stock is None:
-            return self.event_name_B
+            return self.event_name_B #in this case contains a const number
         if self.operand_B == Operand.OPENING_PRICE:
             return stock.opening
         elif self.operand_B == Operand.PEAK_PRICE:
@@ -99,7 +99,14 @@ class Literal:
     def isUnary(self):
         return self.operand_B is None
 
-
+    '''def checktimeWindow(self,stock1,stock2, ptype, timeWindow):
+        #for AND: time diff in abs (| |) < time_window
+        #for SEQ: time diff < time window (Stock1 is before stock2)
+        if ptype == PTYPE.AND:
+            return abs(stock1.timestamp - stock2.timestamp) <= timeWindow
+        elif ptype == PTYPE.SEQ:
+            return (stock2.timestamp - stock1.timestamp) <= timeWindow and (stock2.timestamp - stock1.timestamp) >= 0
+'''
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
 # every inner node in the tree is a clause
 class Clause:

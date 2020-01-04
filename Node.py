@@ -1,5 +1,5 @@
 from Condition import Clause
-from Pattern import Pattern
+from Pattern import Pattern, PTYPE
 import copy
 
 
@@ -10,6 +10,8 @@ class Node:
         self.leftInnerNode = None
         self.leavesList = []
         self.parent = None
+        #self.ptype = ptype
+        #self.timeWindow = timeWindow
 
     '''
     def addLeaves(self, leavesList):
@@ -99,7 +101,7 @@ class Node:
         elif self.parent is None and self.leftInnerNode is not None:  # we are in the root (we have more then 1 inner node)
             if self.leavesList is None:
                 self.checkWhenNoLeaves()
-            elif self.checkWhenBoth():
+            else:
                 self.checkWhenBoth()
             return
 
@@ -114,12 +116,13 @@ class Node:
         self.parent.solveInnerNode()
 
     def checkWhenBoth(self):
+        self.eventsLists = copy.copy(self.leftInnerNode.eventsLists)
         self.filterAccordingLeaves(0)
 
     def filterAccordingLeaves(self, index):
         num = len(self.eventsLists[0])  # cannot be empty
         for leaf in self.leavesList[index:]:
-            for stock in leaf.eventList:
+            for stock in leaf.eventsList:
                 for events_list in self.eventsLists:
 
                     for event in events_list:
@@ -141,6 +144,27 @@ class Node:
         for eventList in self.eventsLists:
             print(eventList)
 
+    def checkTimeWindow(self, ptype, time_window,eventsNames):
+        tmpList = [tupple for tupple in self.eventsLists if self.checkTime(tupple,time_window,ptype,eventsNames)]
+        self.eventsLists = tmpList
+        
+    
+    def checkTime(self, tupple, time_window,ptype,eventsNames):
+        if ptype == PTYPE.AND:
+            max_t = max(event.timestamp for event in tupple)
+            min_t = min(event.timestamp for event in tupple)
+            return (max_t - min_t <= time_window)
+        elif ptype == PTYPE.SEQ:
+            sortedTupple = sorted(tupple, key=lambda x: x.timestamp)
+            max_t = max(event.timestamp for event in sortedTupple)
+            min_t = min(event.timestamp for event in sortedTupple)
+            if (max_t - min_t > time_window):
+                return False
+            for idx in range(len(sortedTupple)):
+                if(sortedTupple[idx].ticker != eventsNames[idx]):
+                    return False
+            return True        
+
 
 # Create functions for organizing the code i.e כפילויות קוד
 # Memory mangement - delete each stock from the leaf when we finish with it
@@ -149,8 +173,6 @@ class Node:
 '''
     def addLeaf(self, leaf):
         self.leavesList.append(leaf)
-
-
     def addLeftInnerNode(self, node):
         self.leftInnerNode = node
 '''

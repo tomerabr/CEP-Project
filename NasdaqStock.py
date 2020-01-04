@@ -12,3 +12,6 @@ class NasdaqStock:
         return ("ticker: " + str(self.ticker) +"\ntimestamp: " + str(self.timestamp) + "\nopening price: " + str(self.opening)
                 + "\npeak: " + str(self.peak)
                 + "\nlowest: " + str(self.lowest) + "\nclose: " + str(self.close) + "\nvolume: " + str(self.volume) + "\n")
+
+    def __eq__(self,other):
+        return self.ticker == other.ticker

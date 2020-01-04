@@ -3,18 +3,20 @@ from Node import Leaf
 
 
 class LeftDeepTree:
-    def __init__(self):
+    def __init__(self,pattern):
         self.root = None
         self.leftInnerNode = None
         self.innerNodes = []
         self.leaves = []
+        self.pattern = pattern
 
     # CNF is a list of Clauses
-    def createTreeAccordingPattern(self, pattern):
+    def createTreeAccordingPattern(self):
         # leaves
         # self.leaves = self.getLeaves(CNF)
         # self.createLeaves(pattern.cond)
 
+        pattern = self.pattern
         for name in pattern.events:
             leaf = Leaf(name)
             self.leaves.append(leaf)
@@ -33,20 +35,21 @@ class LeftDeepTree:
 
         self.innerNodes.append(self.leftInnerNode)
 
-        # tmp_leaves = []
-        tmp_leaves = self.leftInnerNode.leavesList
+        #tmp_leaves = []
+        #for leaf in self.leftInnerNode.leavesList:
+            #tmp_leaves.extend(leaf.name)
         for clause in CNF[1:]:
             node = Node(clause)
-            leavesNames = filter(lambda leaf: leaf not in tmp_leaves,
+            it = filter(lambda leaf: leaf not in leavesNames,
                                  clause.eventsAppearInClause())  # add only leaves which didnt appear yet
             # node.leavesList(filter(lambda leaf: leaf not in tmp_leaves,
             #                      clause.eventsAppearInClause()))
-            tmp_leaves.extend(leavesNames)
-            for leaf in leavesNames:
+            for leaf in it:
+                leavesNames.extend(leaf)
                 for actual_leaf in self.leaves:
                     if actual_leaf.name == leaf:
                         node.leavesList.append(actual_leaf)
-                break
+                        break
 
             node.leftInnerNode = self.innerNodes[-1]  # the last innerNode we were created
             self.innerNodes[-1].parent = node
@@ -56,14 +59,14 @@ class LeftDeepTree:
 
     def solveTree(self):
         self.leftInnerNode.solveInnerNode()
+        #check timewindow for each tupple in root's eventsList
+        self.root.checkTimeWindow(self.pattern.ptype,self.pattern.time_window,self.pattern.events)
 
     '''
     def createLeaves(self, leavesNames):
       for name in leavesNames:
      		leaf = Leaf(name)
         self.leaves.append(leaf)
-
-
     def dumbCreateLeaves(self, CNF):
         leaves = []
         for clause in CNF:
@@ -108,3 +111,4 @@ class LeftDeepTree:
         self.printLeftInnerNode()
         print("\nInnerNode:")
         self.printInnerNodes()
+
