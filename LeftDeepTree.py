@@ -77,9 +77,6 @@ class LeftDeepTree:
             self.leaves.append(new_leaf)
     '''
 
-    def getNewLeaves(self, clause, leaveslist):
-        new_leaves = filter(lambda leaf: leaf not in leaveslist, clause.eventsAppearInClause())
-        return new_leaves
 
     def fillLeaves(self, stocksList):
         for leaf in self.leaves:
@@ -111,4 +108,15 @@ class LeftDeepTree:
         self.printLeftInnerNode()
         print("\nInnerNode:")
         self.printInnerNodes()
+
+    '''
+    def toLeftDeepTree(self):
+        node = self.leftInnerNode.parent #the first does not matter, just the other that after him
+        while node is not None:
+            if len(node.leavesList) >= 2:
+                #make new node as the next node's parent and seperate the clauses
+                new_node = Node()
+    '''
+    
+    
 
