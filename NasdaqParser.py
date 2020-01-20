@@ -5,8 +5,8 @@ from NasdaqStock import NasdaqStock
 
 
 class NasdaqParser:
-    def __init__(self, pattern):
-        lines = open("Stocks ordered.txt", 'r').readlines()
+    def __init__(self, pattern,filename):
+        lines = open(filename, 'r').readlines()
         self.list_of_lists = []
         event_list = []
         for event_name in pattern.events:

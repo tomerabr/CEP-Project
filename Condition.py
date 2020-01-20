@@ -1,7 +1,6 @@
 from enum import Enum
 from Pattern import PTYPE
-
-# from NasdaqStock import NasdaqStock
+from NasdaqStock import Operand
 
 
 class Op(Enum):
@@ -13,20 +12,13 @@ class Op(Enum):
     NOT_EQUAL = 6
 
 
-class Operand(Enum):
-    OPENING_PRICE = 1
-    PEAK_PRICE = 2
-    LOWEST_PRICE = 3
-    CLOSE_PRICE = 4
-    VOLUME = 5
-
 
 class Literal:
     def __init__(self, operator, event_name_A, operand_A, event_name_B, operand_B=None):
         self.event_name_A = event_name_A  # first event name, string
         self.event_name_B = event_name_B  # second event name, string
-        self.operand_A = operand_A  # first event operand, string
-        self.operand_B = operand_B  # second event operand, string
+        self.operand_A = operand_A  # first event operand, enum
+        self.operand_B = operand_B  # second event operand, enum
         self.operator = operator
 
     def checkOperator(self, value1, value2):
@@ -44,10 +36,10 @@ class Literal:
             return (value1 != value2)
         else:
             return False
-
+    '''
     def OperandOfStockB(self, stock=None):
         if stock is None:
-            return self.event_name_B #in this case contains a const number
+            return self.event_name_B 
         if self.operand_B == Operand.OPENING_PRICE:
             return stock.opening
         elif self.operand_B == Operand.PEAK_PRICE:
@@ -58,12 +50,19 @@ class Literal:
             return stock.close
         elif self.operand_B == Operand.VOLUME:
             return stock.volume
-
+'''
     # if stock2 = None it will return the const value
 
     def checkLiteral(self, stock1, stock2=None):
         if stock1.ticker != self.event_name_A or (stock2 is not None and stock2.ticker != self.event_name_B):
             return False
+        valueA = stock1.parseToValue(self.operand_A)
+        if stock2 is not None:
+            valueB = stock2.parseToValue(self.operand_B) 
+        else:
+            valueB = self.event_name_B #in this case contains a const number
+        return self.checkOperator(valueA,valueB)
+        '''
         if self.operand_A == Operand.OPENING_PRICE:
             return self.checkOperator(stock1.opening, self.OperandOfStockB(stock2))
         elif self.operand_A == Operand.PEAK_PRICE:
@@ -76,7 +75,7 @@ class Literal:
             return self.checkOperator(stock1.volume, self.OperandOfStockB(stock2))
         else:
             return False
-
+        '''
     def printLiteral(self):
         print("(", end='')
         print(self.event_name_A, end='')
@@ -99,14 +98,11 @@ class Literal:
     def isUnary(self):
         return self.operand_B is None
 
-    '''def checktimeWindow(self,stock1,stock2, ptype, timeWindow):
-        #for AND: time diff in abs (| |) < time_window
-        #for SEQ: time diff < time window (Stock1 is before stock2)
-        if ptype == PTYPE.AND:
-            return abs(stock1.timestamp - stock2.timestamp) <= timeWindow
-        elif ptype == PTYPE.SEQ:
-            return (stock2.timestamp - stock1.timestamp) <= timeWindow and (stock2.timestamp - stock1.timestamp) >= 0
-'''
+    def eventsAppearInLiteral(self):
+        if self.event_name_B is not None and self.event_name_A != self.event_name_B:
+          return [self.event_name_A,self.event_name_B]
+        else:
+          return [self.event_name_A]
 # clause is a disjunction of literals, where each literal is a PrimitiveCondition
 # every inner node in the tree is a clause
 class Clause:
