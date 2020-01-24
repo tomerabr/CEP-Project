@@ -1,13 +1,20 @@
 from Node import Node
 from Node import Leaf
 
-#The tree that algorithm is based on.
-#The tree is based on a Pattern. 
-#The tree contains leaves, which contains list of events from each type that in the pattern.
+'''
+The tree that the algorithm is based on.
+The tree is based on a Pattern. 
+The tree contains leaves, which contains list of events from each type that in the pattern.
+Every inner node relates to a clause and contains tuples of events that provided the clause of the node.
+'''
 class LeftDeepTree:
 
     #Get the pattern that the tree is based on and list of lists that contain the events
     #that have been parsed from the input file
+    '''
+    Params:
+    -
+    '''
     def __init__(self,pattern,list_of_lists):
         self.root = None
         self.leftInnerNode = None
@@ -52,6 +59,10 @@ class LeftDeepTree:
             self.innerNodes.append(node)
 
         self.root = self.innerNodes[-1]
+
+        for leaf in self.leaves:
+            if leaf.name not in leavesNames:
+                self.root.leavesList.append(leaf)
 
     def solveTree(self):
         self.createTreeAccordingPattern()

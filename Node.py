@@ -88,7 +88,7 @@ class Node:
                         for event in leaf1.eventsList:
                             if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event, event):
 #                                names_in_tupple = [event.ticker]
-                                self.innerNodeOnlyLeaves(litSet, [event.ticker], event1)
+                                self.innerNodeOnlyLeaves(litSet, [event.ticker], event)
                     else:
                         for leaf2 in self.leavesList:
                             if leaf2.name != leaf1.name and leaf2.name in names:
@@ -151,7 +151,8 @@ class Node:
             if first:
                 for ev in leaf.eventsList:
                     c = copy.copy(nofrozen)
-                    all_in.append(c.append(ev))
+                    c.append(ev)
+                    all_in.append(c)
                 first = False
             else:
                 self.appendOtherLeaf(all_in,leaf)
