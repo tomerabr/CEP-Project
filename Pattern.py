@@ -1,6 +1,7 @@
 from enum import Enum
 
-
+#The pattern that the tree is based on.
+#Contains the type, names of events, condtions and time windows.
 class Pattern:
     def __init__(self, ptype, events, cond, time_window):
         self.ptype = ptype  # type_enum

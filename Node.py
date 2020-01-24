@@ -10,86 +10,47 @@ class Node:
         self.leftInnerNode = None
         self.leavesList = []
         self.parent = None
-        
-    def solveWhenOnlyLeaves(self, ptype, time_window,eventsNames):
+
+    def do_all_in(self, litSet, names, names_in_tupple, event1, event2=None): #checked
+        all_in = []
+        self.forOtherLeaves(all_in, names_in_tupple, len(names) + 1, event1, event2)
+        if len(names_in_tupple) == len(names):
+            if event2 is None:
+                all_in = [[event1]]
+            else:
+                all_in = [[event1, event2]]
+        for array in all_in:
+            litSet.add(frozenset(array))
+
+    def solveFirstNode(self, ptype, time_window, eventsNames): #checked
         setsList = []
         for literal in self.clause.clause:
             litSet = set()
-            names = literal.eventsAppearInLiteral()
-            for leaf1 in self.leavesList:
-                if leaf1.name in names:
-                    if len(names) == 1 or isinstance(names[1],float): #a<const or a<a
-                        for event in leaf1.eventsList:
-                            if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event,event):
-                                all_in = []
-                                a = [event.ticker]
-                                for other_leaf in self.leavesList:
-                                    if other_leaf.name in a:
-                                        continue
-                                    else:
-                                        a.append(other_leaf.name)
-                                        if len(a) == 2:
-                                            for ev in other_leaf.eventsList:
-                                                all_in.append([event,ev])
-                                        else:
-                                            size = len(all_in)
-                                            count = 0
-                                            for tupple in all_in:
-                                                if(count == size):
-                                                    break
-                                                for ev in other_leaf.eventsList:
-                                                    c = copy.copy(tupple)
-                                                    c.append(ev)
-                                                    all_in.append(c)
-                                                all_in.pop(0)
-                                                count += 1
-                                if len(a) == 1:
-                                    all_in = [[event]]
-                                for array in all_in:
-                                    litSet.add(frozenset(array))
-                    else:
-                        for leaf2 in self.leavesList:
-                            if leaf2.name != leaf1.name and leaf2.name in names:
-                                for event1 in leaf1.eventsList:
-                                    for event2 in leaf2.eventsList:
-                                        if literal.checkLiteral(event1,event2) or literal.checkLiteral(event2,event1):
-                                            all_in = []
-                                            a = [event1.ticker,event2.ticker]
-                                            for other_leaf in self.leavesList:
-                                                if other_leaf.name in a:
-                                                    continue
-                                                else:
-                                                    a.append(other_leaf.name)
-                                                    if len(a) == 3:
-                                                        for ev in other_leaf.eventsList:
-                                                            all_in.append([event1,event2,ev])
-                                                    else:
-                                                        size = len(all_in)
-                                                        count = 0
-                                                        for tupple in all_in:
-                                                            if(count == size):
-                                                                break
-                                                            for ev in other_leaf.eventsList:
-                                                                c = copy.copy(tupple)
-                                                                c.append(ev)
-                                                                all_in.append(c)
-                                                            all_in.pop(0)
-                                                            count += 1
-                                            if len(a) == 2:
-                                                all_in = [[event1,event2]]
-                                            for array in all_in:
-                                                litSet.add(frozenset(array))
+            names = literal.eventsAppearInLiteral() #[x for x in a if isinstance(x, int)]
+#            for leaf1 in self.leavesList:
+#                if leaf1.name in names:
+            for leaf1 in [leaf for leaf in self.leavesList if leaf.name in names]:
+                if len(names) == 1: # a<const or a<a
+                    for event in leaf1.eventsList:
+                        if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event,event):
+                            self.do_all_in(litSet,names [event.ticker], event)
+                else:
+                    for leaf2 in self.leavesList:
+                        if leaf2.name != leaf1.name and leaf2.name in names:
+                            for event1 in leaf1.eventsList:
+                                for event2 in leaf2.eventsList:
+                                    if literal.checkLiteral(event1, event2) or literal.checkLiteral(event2, event1):
+                                        self.do_all_in(litSet, names, [event1.ticker, event2.ticker], event1, event2)
             setsList.append(litSet)
-        
-        #now each literal has his set
+        # now each literal has his set
         self.eventsLists = set.union(*setsList)
-        #check time window
+        # check time window
         self.checkTimeWindow(ptype, time_window, eventsNames)
 
         if self.parent is not None:
             self.parent.solveInnerNode(ptype, time_window, eventsNames)
 
-    def solveInnerNode(self, ptype, time_window,eventsNames):
+    def solveInnerNode(self, ptype, time_window, eventsNames):
         setsList = []
         for literal in self.clause.clause:
             litSet = set()
@@ -97,172 +58,139 @@ class Node:
             for tupple in self.leftInnerNode.eventsLists:
                 for event1 in tupple:
                     if event1.ticker in names:
-                        if (literal.isUnary() and literal.checkLiteral(event1)) or literal.checkLiteral(event1,event1):
-                            all_in = []
-                            nofrozen = [a for a in tupple]###################tuple with no frozenset
-                            first = True
-                            for leaf in self.leavesList:
-                                if first:
-                                    for ev in leaf.eventsList:
-                                        c = copy.copy(nofrozen)
-                                        all_in.append(c.append(ev))
-                                    first = False
-                                else:
-                                    size = len(all_in)
-                                    count = 0
-                                    for tupple in all_in:
-                                        if(count == size):
-                                            break
-                                        for ev in other_leaf.eventsList:
-                                            c = copy.copy(tupple)
-                                            c.append(ev)
-                                            all_in.append(c)
-                                        all_in.pop(0)
-                                        count += 1
-                            if len(all_in) == 0: #no other leaves
-                                all_in.append(nofrozen)
-                            for arr in all_in:
-                                litSet.add(frozenset(arr))
+                        if (literal.isUnary() and literal.checkLiteral(event1)) or literal.checkLiteral(event1, event1):
+                            self.innerNodeOnlyTupple(litSet, tupple)
                             break
                         else:
-                            dont = False
+                            check_leaves = True
                             for event2 in tupple:
-                                if self.indexInTuple(tupple,event2) <= self.indexInTuple(tupple,event1):
-                                    continue
-                                if event2.ticker in names:
-                                    if literal.checkLiteral(event1,event2) or literal.checkLiteral(event2,event1):
-                                        all_in = []
-                                        nofrozen = [a for a in tupple]###################tuple with no frozenset
-                                        first = True
-                                        for leaf in self.leavesList:
-                                            if first:
-                                                for ev in leaf.eventsList:
-                                                    c = copy.copy(nofrozen)
-                                                    d = c.append(ev)
-                                                    all_in.append(d)
-                                                first = False
-                                            else:
-                                                size = len(all_in)
-                                                count = 0
-                                                for tupple in all_in:
-                                                    if(count == size):
-                                                        break
-                                                    for ev in other_leaf.eventsList:
-                                                        c = copy.copy(tupple)
-                                                        c.append(ev)
-                                                        all_in.append(c)
-                                                    all_in.pop(0)
-                                                    count += 1
-                                        if len(all_in) == 0: #no other leaves
-                                            all_in.append(nofrozen)
-                                        for arr in all_in:
-                                            litSet.add(frozenset(arr))
-                                            dont = True
+#                                if self.indexInTuple(tupple, event2) <= self.indexInTuple(tupple, event1):
+#                                    continue
+                                if self.indexInTuple(tupple, event2) > self.indexInTuple(tupple, event1) and event2.ticker in names:
+                                    if literal.checkLiteral(event1, event2) or literal.checkLiteral(event2, event1):
+                                        self.innerNodeOnlyTupple(litSet, tupple)
+                                        check_leaves = False
                                         break
-                            if not dont:
+#                            if not check_leaves:
+#                                break
+#                            else:
+                            if check_leaves:
                                 for leaf in self.leavesList:
                                     if leaf.name in names:
                                         for event2 in leaf.eventsList:
-                                            if literal.checkLiteral(event1,event2) or literal.checkLiteral(event2,event1):
-                                                nofrozen = [a for a in tupple]###################tuple with no frozenset
-                                                nofrozen.append(event2)
-                                                all_in = []
-                                                first = True
-                                                for other_leaf in self.leavesList:
-                                                    if other_leaf.name != leaf.name:
-                                                        if first:
-                                                            for ev in other_leaf.eventsList:
-                                                                c = copy.copy(nofrozen)
-                                                                all_in.append(c.append(ev))
-                                                            first = True
-                                                        else:
-                                                            size = len(all_in)
-                                                            count = 0
-                                                            for tupple in all_in:
-                                                                if(count == size):
-                                                                    break
-                                                                for ev in other_leaf.eventsList:
-                                                                    c = copy.copy(tupple)
-                                                                    c.append(ev)
-                                                                    all_in.append(c)
-                                                                all_in.pop(0)
-                                                                count += 1
-                                                if len(all_in) == 0:
-                                                    all_in.append(nofrozen)
-                                                for arr in all_in:
-                                                    litSet.add(frozenset(arr))
+                                            if literal.checkLiteral(event1, event2) or literal.checkLiteral(event2, event1):
+                                                self.innerNodeBoth(litSet, tupple, event2, leaf.name)
+
             for leaf1 in self.leavesList:
                 if leaf1.name in names:
-                    if len(names) == 1 or isinstance(names[1],float): #a<const or a<a
+ #                   if len(names) == 1 or isinstance(names[1], float):  # a<const or a<a
+                    if len(names) == 1:  # a<const or a<a
                         for event in leaf1.eventsList:
-                            if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event,event):
-                                all_in = []
-                                a = [event.ticker]
-                                for tupple in self.leftInnerNode.eventsLists:
-                                    nofrozen = [a for a in tupple]
-                                    nofrozen.append(event)
-                                    all_in.append(nofrozen)
-                                for other_leaf in self.leavesList:
-                                    if other_leaf.name in a:
-                                        continue
-                                    else:
-                                        a.append(other_leaf.name)
-                                        size = len(all_in)
-                                        count = 0
-                                        for tupple in all_in:
-                                            if(count == size):
-                                                break
-                                            for ev in other_leaf.eventsList:
-                                                c = copy.copy(tupple)
-                                                c.append(ev)
-                                                all_in.append(c)
-                                            all_in.pop(0)
-                                            count += 1
-                                for array in all_in:
-                                    litSet.add(frozenset(array))
+                            if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event, event):
+#                                names_in_tupple = [event.ticker]
+                                self.innerNodeOnlyLeaves(litSet, [event.ticker], event1)
                     else:
                         for leaf2 in self.leavesList:
                             if leaf2.name != leaf1.name and leaf2.name in names:
                                 for event1 in leaf1.eventsList:
                                     for event2 in leaf2.eventsList:
-                                        if literal.checkLiteral(event1,event2) or literal.checkLiteral(event2,event1):
-                                            all_in = []
-                                            a = [event1.ticker,event2.ticker]
-                                            for tupple in self.leftInnerNode.eventsLists:
-                                                nofrozen = [a for a in tupple]
-                                                nofrozen.append(event1)
-                                                nofrozen.append(event2)
-                                                all_in.append(nofrozen)
-                                            for other_leaf in self.leavesList:
-                                                if other_leaf.name in a:
-                                                    continue
-                                                else:
-                                                    a.append(other_leaf.name)
-                                                    size = len(all_in)
-                                                    count = 0
-                                                    for tupple in all_in:
-                                                        if(count == size):
-                                                            break
-                                                        for ev in other_leaf.eventsList:
-                                                            c = copy.copy(tupple)
-                                                            c.append(ev)
-                                                            all_in.append(c)
-                                                        all_in.pop(0)
-                                                        count += 1
-                                            for array in all_in:
-                                                litSet.add(frozenset(array))
-                                                
-        setsList.append(litSet)
-        
-        #now each literal has his set
+                                        if literal.checkLiteral(event1, event2) or literal.checkLiteral(event2, event1):
+#                                            names_in_tupple = [event1.ticker, event2.ticker]
+                                            self.innerNodeOnlyLeaves(litSet, [event1.ticker, event2.ticker], event1, event2)
+
+            setsList.append(litSet)
+
+        # now each literal has his set
         self.eventsLists = set.union(*setsList)
-        #check time window
+        # check time window
         self.checkTimeWindow(ptype, time_window, eventsNames)
 
         if self.parent is not None:
-            self.parent.solveInnerNode(ptype, time_window, eventsNames)                                                             
+            self.parent.solveInnerNode(ptype, time_window, eventsNames)
+
+    def innerNodeBoth(self,litSet,tupple,event2,name): #ok
+        nofrozen = [a for a in tupple]
+        nofrozen.append(event2)
+        all_in = []
+        first = True
+        for other_leaf in self.leavesList:
+            if other_leaf.name != name:
+                if first:
+                    for ev in other_leaf.eventsList:
+                        c = copy.copy(nofrozen)
+                        all_in.append(c.append(ev))
+                    first = True
+                else:
+                    self.appendOtherLeaf(all_in,other_leaf)
+        if len(all_in) == 0:
+            all_in.append(nofrozen)
+        for arr in all_in:
+            litSet.add(frozenset(arr))
+
+    def innerNodeOnlyLeaves(self,litSet,names_in_tupple, event1,event2=None): #ok
+        all_in = []
+        for tupple in self.leftInnerNode.eventsLists:
+            nofrozen = [a for a in tupple]
+            nofrozen.append(event1)
+            if event2 is not None:
+                nofrozen.append(event2)
+            all_in.append(nofrozen)
+        for other_leaf in filter(lambda leaf: leaf.name not in names_in_tupple, self.leavesList):
+#            if other_leaf.name in names_in_tupple:
+#                continue
+#            else:
+             self.appendOtherLeaf(all_in,other_leaf,names_in_tupple)
+        for array in all_in:
+            litSet.add(frozenset(array))
+
+    def innerNodeOnlyTupple(self, litSet, tupple): #ok
+        all_in = []
+        nofrozen = [a for a in tupple]
+        first = True
+        for leaf in self.leavesList:
+            if first:
+                for ev in leaf.eventsList:
+                    c = copy.copy(nofrozen)
+                    all_in.append(c.append(ev))
+                first = False
+            else:
+                self.appendOtherLeaf(all_in,leaf)
+        if len(all_in) == 0: #no other leaves
+            all_in.append(nofrozen)
+        for arr in all_in:
+            litSet.add(frozenset(arr))
+
+    def forOtherLeaves(self,all_in, names_in_tupple, len_when_first, event1, event2=None): #checked
+        for other_leaf in filter(lambda leaf: leaf.name not in names_in_tupple, self.leavesList):
+#            if other_leaf.name in names_in_tupple:
+#                continue
+#            else:
+            names_in_tupple.append(other_leaf.name)
+            if len(names_in_tupple) == len_when_first:
+                for ev in other_leaf.eventsList:
+                    if event2 is not None:
+                        all_in.append([event1,event2,ev])
+                    else:
+                        all_in.append([event1,ev])
+            else:
+                self.appendOtherLeaf(all_in,other_leaf)
+
+    def appendOtherLeaf(self,all_in,other_leaf,names_in_tupple=None): #ok
+        if names_in_tupple is not None:
+            names_in_tupple.append(other_leaf.name)
+        size = len(all_in)
+        count = 0
+        for tupple in all_in:
+            if(count == size):
+                break
+            for ev in other_leaf.eventsList:
+                c = copy.copy(tupple)
+                c.append(ev)
+                all_in.append(c)
+            all_in.pop(0)
+            count += 1                                       
                                                         
-    def indexInTuple(self,setList, data2):
+    def indexInTuple(self,setList, data2): #ok
         i=-1
         for data in setList:
             i=i+1
@@ -290,15 +218,15 @@ class Node:
             min_t = min(event.timestamp for event in sortedTupple)
             if (max_t - min_t > time_window):
                 return False
-            if(self.parent == None):
-                for idx in range(len(sortedTupple)):
-                    if(sortedTupple[idx].ticker != eventsNames[idx]):
-                        return False
-            else:
-                for i in range(len(sortedTupple)):
-                    for j in range(i+1,len(sortedTupple)):
-                        if(eventsNames.index(sortedTupple[i].ticker) > eventsNames.index(sortedTupple[j].ticker)):
-                            return False
+            
+            tmp = []
+            for name in eventsNames:
+                for event in tupple:
+                    if event.ticker == name:
+                        tmp.append(event)
+            for i in range(len(tmp)-1):
+                if tmp[i].timestamp > tmp[i+1].timestamp:
+                    return False
             return True        
 
 

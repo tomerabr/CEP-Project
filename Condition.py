@@ -2,7 +2,8 @@ from enum import Enum
 from Pattern import PTYPE
 from NasdaqStock import Operand
 
-
+#Enum for the operators between 2 event's operands.
+#Use: Op.Greater, Op.LESS, etc.
 class Op(Enum):
     GREATER = 1
     LESS = 2
@@ -12,8 +13,24 @@ class Op(Enum):
     NOT_EQUAL = 6
 
 
-
+'''
+A class that represents a condition between 2 opernads of 2 events (for example: A.volume < B.volume, A.close_price >= A.peak_price)
+Can also represent a condition between event's operand and a const number(for example: A.close_price == 56.77)
+Each Literal is a condition between maximum 2 attributes.
+'''
 class Literal:
+    '''
+    Initiate an object of Literal.
+    Params:
+    -operator: an enum of type Op, represent the comparison operator between the two operands
+    -event_name_A: the name of the first event's type (for example: "AMZN", "EBAY")
+    -opernad_A: an enum of type Operand, represents the attribute of the first event that we want 
+                to compare
+    -event_name_B: the name of the second event's type. In case of unary literal, contains a const number.
+    -operand_B: an enum of type Operand, represents the attribute of the second event that we want 
+                to compare. In case of unary literal, not given as argument to the constructor and
+                is None as default.
+    '''
     def __init__(self, operator, event_name_A, operand_A, event_name_B, operand_B=None):
         self.event_name_A = event_name_A  # first event name, string
         self.event_name_B = event_name_B  # second event name, string
@@ -21,6 +38,12 @@ class Literal:
         self.operand_B = operand_B  # second event operand, enum
         self.operator = operator
 
+    
+    '''
+    Checks the comparison operator and return true if the values provide the condition.
+    Params:
+    -
+    '''
     def checkOperator(self, value1, value2):
         if self.operator == Op.GREATER:
             return value1 > value2
@@ -36,23 +59,9 @@ class Literal:
             return (value1 != value2)
         else:
             return False
-    '''
-    def OperandOfStockB(self, stock=None):
-        if stock is None:
-            return self.event_name_B 
-        if self.operand_B == Operand.OPENING_PRICE:
-            return stock.opening
-        elif self.operand_B == Operand.PEAK_PRICE:
-            return stock.peak
-        elif self.operand_B == Operand.LOWEST_PRICE:
-            return stock.lowest
-        elif self.operand_B == Operand.CLOSE_PRICE:
-            return stock.close
-        elif self.operand_B == Operand.VOLUME:
-            return stock.volume
-'''
-    # if stock2 = None it will return the const value
-
+    
+    #Gets 2 events and returns true if the desired attributes' values maintain the condition
+    #stock2 == None means the literal is unary and relating only to stock1
     def checkLiteral(self, stock1, stock2=None):
         if stock1.ticker != self.event_name_A or (stock2 is not None and stock2.ticker != self.event_name_B):
             return False
@@ -60,22 +69,10 @@ class Literal:
         if stock2 is not None:
             valueB = stock2.parseToValue(self.operand_B) 
         else:
-            valueB = self.event_name_B #in this case contains a const number
+            valueB = self.event_name_B #in this case event_name_B contains a const number
         return self.checkOperator(valueA,valueB)
-        '''
-        if self.operand_A == Operand.OPENING_PRICE:
-            return self.checkOperator(stock1.opening, self.OperandOfStockB(stock2))
-        elif self.operand_A == Operand.PEAK_PRICE:
-            return self.checkOperator(stock1.peak, self.OperandOfStockB(stock2))
-        elif self.operand_A == Operand.LOWEST_PRICE:
-            return self.checkOperator(stock1.lowest, self.OperandOfStockB(stock2))
-        elif self.operand_A == Operand.CLOSE_PRICE:
-            return self.checkOperator(stock1.close, self.OperandOfStockB(stock2))
-        elif self.operand_A == Operand.VOLUME:
-            return self.checkOperator(stock1.volume, self.OperandOfStockB(stock2))
-        else:
-            return False
-        '''
+        
+    #Prints the literal
     def printLiteral(self):
         print("(", end='')
         print(self.event_name_A, end='')
@@ -90,35 +87,31 @@ class Literal:
             print(self.operand_B, end='')
         print(")", end='')
 
+    #returns the literal as string
     def returnLiteral(self):
         str = self.printLiteral
 
         return str
 
+    #return true if the literal is unary - the condition is only on operand_A,
+    #means that operand_A is compared to a const number
     def isUnary(self):
         return self.operand_B is None
 
+    #Returns a list of the names of the events that exist in the literal
     def eventsAppearInLiteral(self):
-        if self.event_name_B is not None and self.event_name_A != self.event_name_B:
+        if self.event_name_B is not None and self.event_name_A != self.event_name_B and not isinstance(self.event_name_B,float):
           return [self.event_name_A,self.event_name_B]
         else:
           return [self.event_name_A]
-# clause is a disjunction of literals, where each literal is a PrimitiveCondition
-# every inner node in the tree is a clause
+
+
+#Contains of literals, that have logical or between them in the clause.
 class Clause:
     def __init__(self, clause):
         self.clause = clause
 
-    def checkClause(self, stock1, stock2=None):
-        for literal in self.clause:
-            if stock2 is None and literal.isUnary():  # we want to check only Unary
-                if literal.checkLiteral(stock1):
-                    return True
-            elif stock2 is not None and literal.isUnary() is False:
-                if literal.checkLiteral(stock1, stock2):
-                    return True
-        return False
-
+    #Returns a list of the event's names that exist in the clause
     def eventsAppearInClause(self):
         events = []
 
@@ -131,9 +124,9 @@ class Clause:
 
         return events
 
+    #Prints the clause
     def printClause(self):
         print("(", end='')
-       #flag = 0
         count = 0
         length = len(self.clause)
         for literal in self.clause:
@@ -141,5 +134,4 @@ class Clause:
             if count != length-1:
                 print(" OR ", end='')
             count += 1
-            #flag = 1
         print(")", end='')
