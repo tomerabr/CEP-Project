@@ -9,11 +9,11 @@ Every inner node relates to a clause and contains tuples of events that provided
 '''
 class LeftDeepTree:
 
-    #Get the pattern that the tree is based on and list of lists that contain the events
-    #that have been parsed from the input file
     '''
     Params:
-    -
+    -pattern: the pattern the tree is based on.
+    -list_of_lists: a list that contains lists for every event type. Each list contains the events
+                    that been parsed from the input file.
     '''
     def __init__(self,pattern,list_of_lists):
         self.root = None
@@ -27,6 +27,7 @@ class LeftDeepTree:
     def createTreeAccordingPattern(self):
     
         pattern = self.pattern
+        #
         for name in pattern.events:
             leaf = Leaf(name)
             self.leaves.append(leaf)

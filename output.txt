@@ -26,93 +26,13 @@ peak: 282.78
 lowest: 282.56
 close: 282.78
 volume: 200.0
-]
-[ticker: AMZN
-timestamp: 200802010922.0
-opening price: 78.87
-peak: 78.92
-lowest: 78.87
-close: 78.9
-volume: 1450.0
-, ticker: EBAY
-timestamp: 200802010921.0
-opening price: 27.67
-peak: 27.69
-lowest: 27.67
-close: 27.69
-volume: 1131.0
-, ticker: CROX
-timestamp: 200802010921.0
-opening price: 34.79
-peak: 34.79
-lowest: 34.79
-close: 34.79
-volume: 3082.0
-, ticker: BIDU
-timestamp: 200802010921.0
-opening price: 283.0
-peak: 283.0
-lowest: 282.56
-close: 282.56
-volume: 1500.0
-]
-[ticker: AMZN
-timestamp: 200802010922.0
-opening price: 78.87
-peak: 78.92
-lowest: 78.87
-close: 78.9
-volume: 1450.0
-, ticker: EBAY
-timestamp: 200802010921.0
-opening price: 27.67
-peak: 27.69
-lowest: 27.67
-close: 27.69
-volume: 1131.0
-, ticker: CROX
-timestamp: 200802010921.0
-opening price: 34.79
-peak: 34.79
-lowest: 34.79
-close: 34.79
-volume: 3082.0
-, ticker: BIDU
-timestamp: 200802010922.0
-opening price: 282.56
-peak: 282.56
-lowest: 282.06
-close: 282.06
-volume: 200.0
-]
-[ticker: AMZN
-timestamp: 200802010927.0
-opening price: 78.66
-peak: 78.66
-lowest: 78.65
-close: 78.65
-volume: 1000.0
-, ticker: EBAY
-timestamp: 200802010928.0
-opening price: 27.55
-peak: 27.55
-lowest: 27.54
-close: 27.54
-volume: 1400.0
-, ticker: CROX
-timestamp: 200802010928.0
-opening price: 35.48
-peak: 35.51
-lowest: 35.48
-close: 35.5
-volume: 2150.0
-, ticker: BIDU
-timestamp: 200802010928.0
-opening price: 282.45
-peak: 282.45
-lowest: 282.11
-close: 282.11
-volume: 200.0
+, ticker: AAPL
+timestamp: 200802010926.0
+opening price: 135.66
+peak: 135.88
+lowest: 135.66
+close: 135.88
+volume: 6585.0
 ]
 [ticker: AMZN
 timestamp: 200802010927.0
@@ -142,4 +62,47 @@ peak: 282.78
 lowest: 282.56
 close: 282.78
 volume: 200.0
+, ticker: AAPL
+timestamp: 200802010928.0
+opening price: 135.92
+peak: 136.5
+lowest: 135.88
+close: 136.09
+volume: 25304.0
+]
+[ticker: AMZN
+timestamp: 200802010927.0
+opening price: 78.66
+peak: 78.66
+lowest: 78.65
+close: 78.65
+volume: 1000.0
+, ticker: EBAY
+timestamp: 200802010928.0
+opening price: 27.55
+peak: 27.55
+lowest: 27.54
+close: 27.54
+volume: 1400.0
+, ticker: CROX
+timestamp: 200802010928.0
+opening price: 35.48
+peak: 35.51
+lowest: 35.48
+close: 35.5
+volume: 2150.0
+, ticker: BIDU
+timestamp: 200802010928.0
+opening price: 282.45
+peak: 282.45
+lowest: 282.11
+close: 282.11
+volume: 200.0
+, ticker: AAPL
+timestamp: 200802010928.0
+opening price: 135.92
+peak: 136.5
+lowest: 135.88
+close: 136.09
+volume: 25304.0
 ]

@@ -10,6 +10,7 @@ literal3 = Literal(Op.LESS, "EBAY", Operand.LOWEST_PRICE, 27.68)
 literal4 = Literal(Op.LESS,"AMZN", Operand.CLOSE_PRICE, "AMZN", Operand.PEAK_PRICE)
 literal5 = Literal(Op.GREATER,"AMZN", Operand.VOLUME, "BIDU", Operand.VOLUME)
 literal6 = Literal(Op.GREATER,"CROX", Operand.VOLUME, "BIDU", Operand.VOLUME)
+literal7 = Literal(Op.GREATER, "AAPL", Operand.VOLUME, 6000)
 
 
 clause1 = Clause({literal3})
@@ -18,9 +19,10 @@ clause3 = Clause({literal4})
 clause4 = Clause({literal1,literal6})
 clause5 = Clause({literal5})
 clause6 = Clause({literal6})
+clause7 = Clause({literal7})
 
 pattern1 = Pattern(PTYPE.AND, ["AMZN", "EBAY", "CROX", "BIDU"], [clause2,clause1,clause5,clause4], 2)
-pattern2 = Pattern(PTYPE.AND, ["AMZN","EBAY", "CROX", "BIDU"], [clause4,clause1,clause3], 1)
+pattern2 = Pattern(PTYPE.AND, ["AMZN","EBAY", "CROX", "BIDU", "AAPL"], [clause4,clause1,clause3,clause7], 1)
 pattern3 = Pattern(PTYPE.AND, ["AMZN", "EBAY", "CROX","BIDU"], [clause2,clause6,clause5], 1)
 
 np1 = Parser(pattern1,"Stocks o.txt",NasdaqStock)

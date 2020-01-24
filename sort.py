@@ -1,4 +1,4 @@
-#A script for sorting the input file by timestamp.
+#a script for sorting the input file by timestamp.
 
 lines = open("stocks.txt", 'r').readlines()
 output_file = open("Stocks ordered.txt", 'w')
