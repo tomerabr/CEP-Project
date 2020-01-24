@@ -118,7 +118,8 @@ class Node:
                 if first:
                     for ev in other_leaf.eventsList:
                         c = copy.copy(nofrozen)
-                        all_in.append(c.append(ev))
+                        c.append(ev)
+                        all_in.append(c)
                     first = True
                 else:
                     self.appendOtherLeaf(all_in,other_leaf)
