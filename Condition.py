@@ -42,7 +42,10 @@ class Literal:
     '''
     Checks the comparison operator and return true if the values provide the condition.
     Params:
-    -
+    -value1: the actual value of the first event's attribute
+    -value2: the actual value of the second event's attribute. In case of unary literal, contains the
+            given const number.
+    Return: true if the values provide the condition.
     '''
     def checkOperator(self, value1, value2):
         if self.operator == Op.GREATER:
@@ -60,14 +63,22 @@ class Literal:
         else:
             return False
     
-    #Gets 2 events and returns true if the desired attributes' values maintain the condition
-    #stock2 == None means the literal is unary and relating only to stock1
-    def checkLiteral(self, stock1, stock2=None):
-        if stock1.ticker != self.event_name_A or (stock2 is not None and stock2.ticker != self.event_name_B):
+
+    '''
+    Checks if the two given events provide the literal's condition.
+    Params:
+    -event1: the first event that we want to compare its attribute.
+    -event2: the second event that we want to compare its attribute. In case of unary literal,
+             not being sent as argument and contains None as default.
+    Return: true if the event's desired attributes provide the literal's condition.
+    '''
+    def checkLiteral(self, event1, event2=None):
+        #Check if the event's names fit to the names in the Literal.
+        if event1.ticker != self.event_name_A or (event2 is not None and event2.ticker != self.event_name_B):
             return False
-        valueA = stock1.parseToValue(self.operand_A)
-        if stock2 is not None:
-            valueB = stock2.parseToValue(self.operand_B) 
+        valueA = event1.parseToValue(self.operand_A)
+        if event2 is not None: #if not unary
+            valueB = event2.parseToValue(self.operand_B) 
         else:
             valueB = self.event_name_B #in this case event_name_B contains a const number
         return self.checkOperator(valueA,valueB)
@@ -90,24 +101,28 @@ class Literal:
     #returns the literal as string
     def returnLiteral(self):
         str = self.printLiteral
-
         return str
 
-    #return true if the literal is unary - the condition is only on operand_A,
+    #returns true if the literal is unary - the condition is only on operand_A,
     #means that operand_A is compared to a const number
     def isUnary(self):
         return self.operand_B is None
 
     #Returns a list of the names of the events that exist in the literal
     def eventsAppearInLiteral(self):
-        if self.event_name_B is not None and self.event_name_A != self.event_name_B and not isinstance(self.event_name_B,float):
+        #if not unary, event_name_B is a string and not a number and not equals to event_name_A
+        if not self.isUnary() and not isinstance(self.event_name_B,float) and self.event_name_A != self.event_name_B:
           return [self.event_name_A,self.event_name_B]
         else:
           return [self.event_name_A]
 
 
-#Contains of literals, that have logical or between them in the clause.
+#Contains of literals, that have logical OR between them in the clause.
 class Clause:
+    '''
+    Params:
+    -clause: List of literals.
+    '''
     def __init__(self, clause):
         self.clause = clause
 
@@ -116,9 +131,9 @@ class Clause:
         events = []
 
         for literal in self.clause:
-            if literal.event_name_A not in events:
+            if literal.event_name_A not in events: #if the name is not in events array already
                 events.append(literal.event_name_A)
-            if not literal.isUnary():
+            if not literal.isUnary(): #means that event_name_B of literal is not a number
                 if literal.event_name_B not in events:
                     events.append(literal.event_name_B)
 
