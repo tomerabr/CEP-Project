@@ -8,7 +8,7 @@ class Operand(Enum):
     CLOSE_PRICE = 4
     VOLUME = 5
 
-#A class for the type of events we want to get the algorithm work on
+#a class for the type of events we want to get the algorithm work on
 class NasdaqStock:
     
     #Gets a list of values (in order that are exist in input file),

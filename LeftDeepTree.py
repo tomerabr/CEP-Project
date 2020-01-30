@@ -1,6 +1,12 @@
 from Node import Node
 from Node import Leaf
 
+
+first_clause = 0
+second_clause = 1
+last_clause = -1
+name = 0
+
 '''
 The tree that the algorithm is based on.
 The tree is based on a Pattern. 
@@ -27,24 +33,24 @@ class LeftDeepTree:
     def createTreeAccordingPattern(self):
     
         pattern = self.pattern
-        #
+        #for each event type's name, make a Leaf object and append it to the list of leaves
         for name in pattern.events:
             leaf = Leaf(name)
             self.leaves.append(leaf)
 
         CNF = pattern.cond
-        self.leftInnerNode = Node(CNF[0])  # the first clause
-        leavesNames = CNF[0].eventsAppearInClause()  # It is the first node therefore the leaves in clause.eventsAppearInClause() didn't appear yet
+        self.leftInnerNode = Node(CNF[first_clause])  # the first clause
+        leavesNames = CNF[first_clause].eventsAppearInClause()  # It is the first node therefore the leaves in clause.eventsAppearInClause() didn't appear yet
         for leaf in leavesNames:
             for actual_leaf in self.leaves:
                 if actual_leaf.name == leaf:
-                    self.leftInnerNode.leavesList.append(actual_leaf)
+                    self.leftInnerNode.leavesList.append(actual_leaf) #appending the leaf to the first inner node that uses it in the condition
                     break
 
         self.innerNodes.append(self.leftInnerNode)
 
-        
-        for clause in CNF[1:]:
+        #for all other clauses
+        for clause in CNF[second_clause:]:
             node = Node(clause)
             it = filter(lambda leaf: leaf not in leavesNames,
                                  clause.eventsAppearInClause())  # add only leaves which didn't appear yet
@@ -52,19 +58,27 @@ class LeftDeepTree:
                 leavesNames.append(leaf)
                 for actual_leaf in self.leaves:
                     if actual_leaf.name == leaf:
-                        node.leavesList.append(actual_leaf)
+                        node.leavesList.append(actual_leaf)#appending the leaf to the first inner node that uses it in the condition
                         break
 
-            node.leftInnerNode = self.innerNodes[-1]  # the last innerNode we created
-            self.innerNodes[-1].parent = node
+            node.leftInnerNode = self.innerNodes[last_clause]  # the last innerNode we created
+            self.innerNodes[last_clause].parent = node
             self.innerNodes.append(node)
 
-        self.root = self.innerNodes[-1]
+        self.root = self.innerNodes[last_clause] #the root is the last innerNode that was created
 
+        #for every other leaf that hasn't been attached to an innerNode, attach to the root, as 
+        #it only needs to be part of the list but doesn't have a clause that uses it
         for leaf in self.leaves:
             if leaf.name not in leavesNames:
                 self.root.leavesList.append(leaf)
 
+    '''
+    First, creates the tree according to the pattern that been given.
+    Next, fills the leaves according to list that been given.
+    After that, calls the first innerNode's solve method a start running the algorithm.
+    In the end, the root contains the tuples of events that meet all the conditions.
+    '''
     def solveTree(self):
         self.createTreeAccordingPattern()
         self.fillLeaves()
@@ -73,9 +87,9 @@ class LeftDeepTree:
     #Fills the leaves with events according to the list_of_lists
     def fillLeaves(self):
         for leaf in self.leaves:
-            for stocks in self.list_of_lists:
-                if stocks[0].ticker == leaf.name:
-                    leaf.addStocksToLeaf(stocks)
+            for events in self.list_of_lists:
+                if events[name].ticker == leaf.name:
+                    leaf.addeventsToLeaf(events)
                     break
 
     #Prints the leaves of the tree
@@ -107,7 +121,7 @@ class LeftDeepTree:
         print("\nInnerNode:")
         self.printInnerNodes()
 
-    #Gets a filename and prints to it the events that are in the root.
+    #Gets a filename and prints to it the tuples of events that are in the root.
     #The events are printed according to the list of names that was given.
     def outputToFile(self, filename):
         f = open(filename,'w')
