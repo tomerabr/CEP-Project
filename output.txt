@@ -1,0 +1,87 @@
+[ticker: AMZN
+timestamp: 200802010925.0
+opening price: 78.77
+peak: 78.77
+lowest: 78.7
+close: 78.7
+volume: 1470.0
+, ticker: EBAY
+timestamp: 200802010925.0
+opening price: 27.55
+peak: 27.7
+lowest: 27.42
+close: 27.7
+volume: 1400.0
+, ticker: CROX
+timestamp: 200802010923.0
+opening price: 35.49
+peak: 35.49
+lowest: 35.49
+close: 35.49
+volume: 250.0
+, ticker: BIDU
+timestamp: 200802010922.0
+opening price: 282.56
+peak: 282.56
+lowest: 282.06
+close: 282.06
+volume: 200.0
+]
+[ticker: AMZN
+timestamp: 200802010922.0
+opening price: 78.87
+peak: 78.92
+lowest: 78.87
+close: 78.9
+volume: 1450.0
+, ticker: EBAY
+timestamp: 200802010921.0
+opening price: 27.67
+peak: 27.69
+lowest: 27.67
+close: 27.69
+volume: 1131.0
+, ticker: CROX
+timestamp: 200802010923.0
+opening price: 35.49
+peak: 35.49
+lowest: 35.49
+close: 35.49
+volume: 250.0
+, ticker: BIDU
+timestamp: 200802010922.0
+opening price: 282.56
+peak: 282.56
+lowest: 282.06
+close: 282.06
+volume: 200.0
+]
+[ticker: AMZN
+timestamp: 200802010922.0
+opening price: 78.87
+peak: 78.92
+lowest: 78.87
+close: 78.9
+volume: 1450.0
+, ticker: EBAY
+timestamp: 200802010925.0
+opening price: 27.55
+peak: 27.7
+lowest: 27.42
+close: 27.7
+volume: 1400.0
+, ticker: CROX
+timestamp: 200802010923.0
+opening price: 35.49
+peak: 35.49
+lowest: 35.49
+close: 35.49
+volume: 250.0
+, ticker: BIDU
+timestamp: 200802010922.0
+opening price: 282.56
+peak: 282.56
+lowest: 282.06
+close: 282.06
+volume: 200.0
+]
