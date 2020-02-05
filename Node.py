@@ -277,5 +277,5 @@ class Leaf:
         self.eventsList = []
         self.name = name
 
-    def addStocksToLeaf(self, stocks):
+    def addEventsToLeaf(self, stocks):
         self.eventsList.extend(stocks)
