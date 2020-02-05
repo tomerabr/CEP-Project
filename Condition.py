@@ -1,6 +1,4 @@
 from enum import Enum
-from Pattern import PTYPE
-from NasdaqStock import Operand
 
 #Enum for the operators between 2 event's operands.
 #Use: Op.Greater, Op.LESS, etc.
