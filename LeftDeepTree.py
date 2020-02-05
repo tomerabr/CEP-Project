@@ -89,7 +89,7 @@ class LeftDeepTree:
         for leaf in self.leaves:
             for events in self.list_of_lists:
                 if events[name].ticker == leaf.name:
-                    leaf.addeventsToLeaf(events)
+                    leaf.addEventsToLeaf(events)
                     break
 
     #Prints the leaves of the tree
