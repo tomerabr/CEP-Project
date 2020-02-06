@@ -1,5 +1,4 @@
-from Condition import Clause
-from Pattern import Pattern, PTYPE
+from Pattern import PTYPE
 import copy
 
 '''
@@ -50,7 +49,7 @@ class Node:
                 if len(names) == 1:  # a<const or a<a
                     for event in leaf1.eventsList:
                         if (literal.isUnary() and literal.checkLiteral(event)) or literal.checkLiteral(event, event):
-                            self.do_all_in(litSet, names[event.ticker], event)
+                            self.do_all_in(litSet, names, [event.ticker], event)
                 else:
                     for leaf2 in self.leavesList:
                         if leaf2.name != leaf1.name and leaf2.name in names:
